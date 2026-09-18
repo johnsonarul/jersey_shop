@@ -1,0 +1,34 @@
+﻿# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDEs and Editors #
+####################
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.bak
+
+# Log files #
+#############
+*.log
+error_log
+
+# PHP specific #
+################
+vendor/
+composer.phar
+.env
+
+# XAMPP/Local server files #
+############################
+.htpasswds/
