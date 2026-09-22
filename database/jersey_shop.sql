@@ -1,6 +1,3 @@
-CREATE DATABASE IF NOT EXISTS jersey_shop;
-USE jersey_shop;
-
 CREATE TABLE admins (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) NOT NULL,

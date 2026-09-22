@@ -29,7 +29,19 @@ if(empty($cart_items)) {
     exit();
 }
 
-$shipping = ($subtotal > 1500) ? 0 : 80;
+$shipping = 50.00;
+
+$discount = 0;
+if (isset($_SESSION['reward_active']) && $_SESSION['reward_active']) {
+    $max_price = 0;
+    foreach($cart_items as $item) {
+        if ($item['price'] > $max_price) $max_price = $item['price'];
+    }
+    $discount = $max_price;
+    $subtotal -= $discount;
+    if ($subtotal < 0) $subtotal = 0;
+}
+
 $total = $subtotal + $shipping;
 ?>
 
@@ -94,11 +106,17 @@ $total = $subtotal + $shipping;
                         
                         <div class="d-flex justify-content-between mt-4 mb-2">
                             <span>Subtotal</span>
-                            <span>₹<?= number_format($subtotal, 2) ?></span>
+                            <span>₹<?= number_format($subtotal + $discount, 2) ?></span>
                         </div>
+                        <?php if($discount > 0): ?>
+                        <div class="d-flex justify-content-between mb-2 text-success">
+                            <span>Free Jersey Reward</span>
+                            <span>-₹<?= number_format($discount, 2) ?></span>
+                        </div>
+                        <?php endif; ?>
                         <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
                             <span>Shipping</span>
-                            <span><?= $shipping == 0 ? 'FREE' : '₹'.number_format($shipping, 2) ?></span>
+                            <span>₹<?= number_format($shipping, 2) ?></span>
                         </div>
                         
                         <div class="d-flex justify-content-between mb-4">

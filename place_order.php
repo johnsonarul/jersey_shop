@@ -37,7 +37,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             throw new Exception("Your cart is empty.");
         }
 
-        $shipping = ($subtotal > 1500) ? 0 : 80;
+        $shipping = 50;
+        
+        $discount = 0;
+        if (isset($_SESSION['reward_active']) && $_SESSION['reward_active']) {
+            // Find max price item
+            $max_price = 0;
+            foreach($cart_items as $item) {
+                if ($item['price'] > $max_price) $max_price = $item['price'];
+            }
+            $discount = $max_price;
+            $subtotal -= $discount;
+            if ($subtotal < 0) $subtotal = 0;
+            
+            // Deduct 10 points
+            $conn->query("UPDATE users SET quiz_points = quiz_points - 10 WHERE id = $user_id");
+            unset($_SESSION['reward_active']);
+        }
+        
         $total = $subtotal + $shipping;
         
         $order_number = 'FS' . date('YmdHi') . rand(1000,9999);
@@ -64,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Insert Order
-        $stmt = $conn->prepare("INSERT INTO orders (user_id, order_number, total_amount, shipping_charge, payment_method, transaction_id, payment_status, shipping_name, shipping_phone, shipping_email, shipping_address, city, state, pincode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("isddssssssssss", $user_id, $order_number, $total, $shipping, $payment_method, $transaction_id, $payment_status, $name, $phone, $email, $address, $city, $state, $pincode);
+        $stmt = $conn->prepare("INSERT INTO orders (user_id, order_number, total_amount, shipping_charge, discount, payment_method, transaction_id, payment_status, shipping_name, shipping_phone, shipping_email, shipping_address, city, state, pincode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("isdddssssssssss", $user_id, $order_number, $total, $shipping, $discount, $payment_method, $transaction_id, $payment_status, $name, $phone, $email, $address, $city, $state, $pincode);
         $stmt->execute();
         $order_id = $stmt->insert_id;
 
@@ -101,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $conn->commit();
         
-        echo "<script>alert('Order Placed Successfully! Your Order Number is $order_number'); window.location.href='account.php';</script>";
+        echo "<script>alert('Order Placed Successfully! Your Order Number is $order_number'); window.location.href='quiz.php?order_id=$order_number';</script>";
         exit();
 
     } catch (Exception $e) {

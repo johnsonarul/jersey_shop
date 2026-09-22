@@ -1,15 +1,16 @@
 <?php
-// db.php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "jersey_shop";
+$servername = getenv('DB_HOST') ?: 'localhost';
+$username = getenv('DB_USER') ?: 'root';
+$password = getenv('DB_PASSWORD') ?: '';
+$dbname = getenv('DB_NAME') ?: 'jersey_shop';
+$port = (int) (getenv('DB_PORT') ?: 3306);
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($servername, $username, $password, $dbname, $port);
 
-// Check connection
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    error_log('Database connection failed: ' . $conn->connect_error);
+    die('Database connection is unavailable. Please try again later.');
 }
+
+$conn->set_charset('utf8mb4');
 ?>

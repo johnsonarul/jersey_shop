@@ -23,12 +23,21 @@ desktop.ini
 *.log
 error_log
 
-# PHP specific #
-################
+# PHP and local configuration #
+##############################
 vendor/
 composer.phar
-.env
+*.env
+!.env.example
 
 # XAMPP/Local server files #
 ############################
 .htpasswds/
+/xampp/
+
+# Runtime temporary files #
+###########################
+/tmp/
+
+# Keep only the canonical database dump.
+/jersey_shop_db.sql

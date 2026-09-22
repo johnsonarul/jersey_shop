@@ -33,6 +33,28 @@ $orders = $o_stmt->get_result();
         <div class="col-md-9">
             <h3 class="mb-4">Welcome, <?= htmlspecialchars($user['full_name']) ?></h3>
             
+            <?php if(isset($_SESSION['quiz_msg'])) { echo $_SESSION['quiz_msg']; unset($_SESSION['quiz_msg']); } ?>
+            
+            <div class="card bg-card border border-primary mb-4 p-4 shadow-sm" style="background-color: rgba(255,51,102,0.1);">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0" style="color: var(--primary-color);"><i class="fas fa-trophy"></i> Sports Quiz Rewards</h5>
+                    <span class="badge bg-warning text-dark fs-6" style="color: #000 !important;"><?= $user['quiz_points'] ?> / 10 Points</span>
+                </div>
+                <div class="progress mb-3" style="height: 20px; background-color: rgba(255,255,255,0.1);">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: <?= min(100, $user['quiz_points'] * 10) ?>%;"></div>
+                </div>
+                <?php if ($user['quiz_points'] >= 10): ?>
+                    <p class="text-white mb-3">Congratulations! You have earned a FREE Jersey.</p>
+                    <?php if (isset($_SESSION['reward_active']) && $_SESSION['reward_active']): ?>
+                        <div class="alert alert-success">Reward is active! The most expensive jersey in your next order will be free.</div>
+                    <?php else: ?>
+                        <a href="activate_reward.php" class="btn btn-primary px-4 py-2" style="border-radius: 30px; background: var(--primary-color); border: none;">Activate Free Jersey Pass</a>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <p class="text-white mb-0" style="color: #cccccc !important; font-size: 0.9rem;">Place an order to get a quiz question. Answer correctly in 10s to earn a point! Reach 10 points for a free jersey.</p>
+                <?php endif; ?>
+            </div>
+            
             <div class="row">
                 <div class="col-md-6 mb-4">
                     <div class="card h-100">
